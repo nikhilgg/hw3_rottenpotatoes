@@ -47,7 +47,25 @@ Then /I should see no movies/ do
   numberOfRows = page.all('table tbody tr').size
   assert_equal 0, numberOfRows
 end
+
 Then /the movies should be sorted alphabetically/ do
   check_order Movie.all(:order => :title)
 end
+
+def check_order(sortedList)
+  sortedList.each_cons(2) do |x,y|
+    steps %Q(Then I should see "#{x.title}" before "#{y.title}")
+  end
+end
+
+
+When /all the movies are displayed/ do
+  steps "When I check the following ratings: PG, R, G, PG-13"
+  steps "And I press \"Refresh\""
+end
+
+When /the movies should be sorted in increasing order of release date/ do
+  check_order Movie.all(:order => :release_date)
+end
+
 
